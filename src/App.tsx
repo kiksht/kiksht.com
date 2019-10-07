@@ -1,5 +1,8 @@
 import React, { Component } from "react";
 import { BrowserRouter as Router, Redirect, Switch, Route, Link } from "react-router-dom";
+import Fuse from "fuse.js";
+
+import "./App.css";
 import * as kiksht from "./kiksht";
 
 class Api {
@@ -58,7 +61,6 @@ class Api {
 }
 
 class Home extends Component<{
-    onLogout: (e: React.FormEvent<HTMLFormElement>) => void;
     user: undefined | { email: string };
 }> {
     render() {
@@ -73,11 +75,6 @@ class Home extends Component<{
                 <div>
                     <h2>Home</h2>
                     <p>Hello, {this.props.user.email}</p>
-                    <form onSubmit={this.props.onLogout} method="post">
-                        <div>
-                            <input type="submit" name="submit" value="Logout" />
-                        </div>
-                    </form>
                 </div>
             );
         }
@@ -136,41 +133,84 @@ class Register extends Component<{
 
 class Dictionary extends Component<
     { onUnauthorized: () => void },
-    { query: string; matches: [string, kiksht.Entry][]; dictionary: kiksht.Dictionary }
+    {
+        query: string;
+        matches: [string, kiksht.Entry][];
+        dictionary: undefined | Fuse<kiksht.Entry>;
+    }
 > {
     state = {
         query: "",
         matches: [] as [string, kiksht.Entry][],
-        dictionary: {} as kiksht.Dictionary,
+        dictionary: undefined as undefined | Fuse<kiksht.Entry>,
     };
+
+    debounceTimer: NodeJS.Timeout | undefined;
 
     handleSearchBoxUpdate(e: React.ChangeEvent<HTMLInputElement>) {
         const query = e.target.value;
-        const matches: [string, kiksht.Entry][] = [];
-        for (const [w, entry] of Object.entries(this.state.dictionary)) {
-            if (w.includes(query)) {
-                matches.push([w, entry]);
-            }
+        if (query === "") {
+            this.setState({ query, matches: [] });
+            return;
         }
 
-        this.setState({ query, matches });
+        if (this.state.dictionary !== undefined) {
+            // Update query box. This is cheap so we can do it every time.
+            this.setState({ query });
+
+            // Debounce computing matches because rendering them is very
+            // expensive.
+            clearTimeout(this.debounceTimer as NodeJS.Timeout);
+            const dict = this.state.dictionary;
+            this.debounceTimer = setTimeout(() => {
+                const matches = dict
+                    .search(query)
+                    .map<[string, kiksht.Entry]>(entry => [entry.root, entry])
+                    .slice(0, 100);
+                this.setState({ matches });
+            }, 100);
+        } else {
+            this.setState({ query, matches: [] });
+        }
     }
 
     render() {
-        Api.dictionary().then(async resp => {
-            if (resp.status === 200) {
-                this.setState({ dictionary: await resp.json() });
-            } else if (resp.status === 401) {
-                this.props.onUnauthorized();
-            }
-        });
+        if (this.state.dictionary === undefined) {
+            Api.dictionary().then(async resp => {
+                if (resp.status === 200) {
+                    const dictData = Object.entries<kiksht.Entry>(await resp.json()).map(
+                        ([word, entry]) => {
+                            entry.root = word;
+                            return entry;
+                        },
+                    );
+                    this.setState({
+                        dictionary: new Fuse(dictData, {
+                            keys: [
+                                "root",
+                                "partOfSpeech",
+                                "definition",
+                                "forms",
+                                "examples",
+                                "notes",
+                                "seeAlso",
+                                "pronunciation",
+                            ],
+                        }),
+                    });
+                } else if (resp.status === 401) {
+                    this.props.onUnauthorized();
+                }
+            });
+        }
 
         return (
-            <div>
+            <div className="dict">
                 <form onSubmit={e => e.preventDefault()}>
                     <div>
                         <input
                             type="text"
+                            placeholder="Type word here"
                             value={this.state.query}
                             onChange={e => this.handleSearchBoxUpdate(e)}
                             autoFocus
@@ -179,11 +219,84 @@ class Dictionary extends Component<
                 </form>
                 <ul>
                     {this.state.matches.map(([word, entry]) => (
-                        // <li key={item.id}>{item.text}</li>
-                        <li>{`${word}: [${entry.partOfSpeech}] ${entry.definition}`}</li>
+                        <li>
+                            <DictionaryEntry word={word} entry={entry} />
+                        </li>
                     ))}
                 </ul>
-                {/* {JSON.stringify(this.state.dictionary, undefined, "  ")} */}
+            </div>
+        );
+    }
+}
+
+class DictionaryEntry extends Component<{ word: string; entry: kiksht.Entry }> {
+    render() {
+        const entry = this.props.entry;
+        const forms =
+            entry.forms === undefined || entry.forms == null || entry.forms.length === 0 ? (
+                ""
+            ) : (
+                <div>
+                    <i>Forms:</i>
+                    <ul>
+                        {entry.forms.map(form => (
+                            <li>
+                                <i>{form.kiksht}</i>: {form.english}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            );
+        const examples =
+            entry.examples === undefined ||
+            entry.examples == null ||
+            entry.examples.length === 0 ? (
+                ""
+            ) : (
+                <div>
+                    <i>Examples:</i>
+                    <ul>
+                        {entry.examples.map(form => (
+                            <li>
+                                <i>{form.kiksht}</i>: {form.english}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            );
+        const notes =
+            entry.notes === undefined || entry.notes == null || entry.notes.length === 0 ? (
+                ""
+            ) : (
+                <div>
+                    <i>Notes:</i> {entry.notes.join(", ")}
+                </div>
+            );
+        const seeAlso =
+            entry.seeAlso === undefined || entry.seeAlso == null || entry.seeAlso.length === 0 ? (
+                ""
+            ) : (
+                <div>
+                    <i>See also:</i> {entry.seeAlso.join(", ")}
+                </div>
+            );
+        const pronunciation =
+            entry.pronunciation === undefined || entry.pronunciation == null ? (
+                ""
+            ) : (
+                <div>
+                    <i>Pronunciation:</i> {entry.pronunciation}
+                </div>
+            );
+
+        return (
+            <div className="dict-entry">
+                <b>{this.props.word}</b>: [<i>{entry.partOfSpeech}</i>] {entry.definition}
+                {forms}
+                {examples}
+                {notes}
+                {seeAlso}
+                {pronunciation}
             </div>
         );
     }
@@ -227,9 +340,10 @@ export default class App extends Component<
         }
     }
 
-    async handleLogout(e: React.FormEvent<HTMLFormElement>) {
+    async handleLogout(e: React.FormEvent<HTMLAnchorElement>) {
         e.preventDefault();
         const resp = await Api.logout();
+        console.log(`logout ${resp.status}`);
         this.setState({ redirectTo: resp.status === 200 ? "/" : undefined, user: undefined });
     }
 
@@ -277,32 +391,39 @@ export default class App extends Component<
             });
         }
 
-        let dictionaryNav =
+        const navUl =
             this.state.user === undefined ? (
-                ""
+                <ul>
+                    <li>
+                        <Link to="/">Home</Link>
+                    </li>
+                    <li>
+                        <Link to="/login">Log in</Link>
+                    </li>
+                    <li>
+                        <Link to="/register">Register</Link>
+                    </li>
+                </ul>
             ) : (
-                <li>
-                    <Link to="/dictionary">Dictionary</Link>
-                </li>
+                <ul>
+                    <li>
+                        <Link to="/">Home</Link>
+                    </li>
+                    <li>
+                        <Link to="/dictionary">Dictionary</Link>
+                    </li>
+                    <li>
+                        <Link to="" onClick={e => this.handleLogout(e)}>
+                            Sign out
+                        </Link>
+                    </li>
+                </ul>
             );
 
         return (
             <Router>
                 <div>
-                    <nav>
-                        <ul>
-                            <li>
-                                <Link to="/">Home</Link>
-                            </li>
-                            <li>
-                                <Link to="/login">Log in</Link>
-                            </li>
-                            <li>
-                                <Link to="/register">Register</Link>
-                            </li>
-                            {dictionaryNav}
-                        </ul>
-                    </nav>
+                    <nav className="nav">{navUl}</nav>
 
                     {/* A <Switch> looks through its children <Route>s and
             renders the first one that matches the current URL. */}
@@ -323,7 +444,7 @@ export default class App extends Component<
                             <Dictionary onUnauthorized={() => this.handleUnauthorized()} />
                         </Route>
                         <Route path="/">
-                            <Home onLogout={e => this.handleLogout(e)} user={this.state.user} />
+                            <Home user={this.state.user} />
                         </Route>
                     </Switch>
                 </div>

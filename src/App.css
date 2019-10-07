@@ -20,3 +20,61 @@
 .App-link {
   color: #09d3ac;
 }
+
+body {
+  margin: auto;
+  width: 600px;
+}
+
+.nav ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.nav ul li {
+  display: inline;
+  padding: 0.25em;
+}
+
+.dict ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.dict li {
+  margin-bottom: 0.8em;
+}
+
+.dict form input {
+  width: 100%;
+  padding: 10px;
+  font-size: 200%;
+  outline-width: 0;
+  border: 2px solid #aaa;
+  border-radius: 5px;
+}
+
+::placeholder {
+  color: #aaa;
+}
+
+.dict-entry {
+  margin-bottom: 0.8em;
+}
+
+.dict-entry div {
+  margin-top: 0;
+  margin-bottom: 0.5em;
+  margin-left: 1em;
+}
+
+.dict-entry ul {
+  list-style: disc;
+  padding-left: 1em;
+  margin-left: 1em;
+  padding-left: 1.25em;
+}
+
+.dict-entry ul li {
+  margin-bottom: 0;
+}

@@ -8,7 +8,19 @@ export interface Form {
     english: string;
 }
 
-export type PartOfSpeech = "n" | "pron" | "vb" | "adv" | "part" | "interj" | "place" | "rel";
+export type PartOfSpeech =
+    | "n"
+    | "pron"
+    | "vb"
+    | "adv"
+    | "part"
+    | "interj"
+    | "place"
+    | "rel"
+    | "conj"
+    | "adj n"
+    | "idiom"
+    | "num";
 
 export interface Entry {
     root: string;
