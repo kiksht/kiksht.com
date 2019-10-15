@@ -67,14 +67,33 @@ class Home extends Component<{
         if (this.props.user === undefined) {
             return (
                 <div>
-                    <h2>Home</h2>
+                    <p>
+                        <a href="https://en.wikipedia.org/wiki/Kiksht" target="_target">
+                            Kiksht
+                        </a>{" "}
+                        is a dialect of Upper Chinook that was spoken along the Columbia River in
+                        present day Washington and Oregon.
+                    </p>
+                    <p>
+                        This site contains resources for learning, reading, writing, and speaking
+                        the language. If you are an enrolled member of the{" "}
+                        <a href="https://warmsprings-nsn.gov/" target="_target">
+                            Confederated Tribes of Warm Springs
+                        </a>
+                        , you can <Link to="/login">create an account</Link> to access these
+                        materials.
+                    </p>
                 </div>
             );
         } else {
             return (
                 <div>
-                    <h2>Home</h2>
-                    <p>Hello, {this.props.user.email}</p>
+                    <p>Hello, {this.props.user.email}!</p>
+                    <p>
+                        kiksht.com does not have many resources yet, but we do have a searchable
+                        version of our <Link to="/dictionary">dictionary</Link>. Please do let us
+                        know if you encounter bugs!
+                    </p>
                 </div>
             );
         }
