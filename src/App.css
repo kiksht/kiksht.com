@@ -26,6 +26,16 @@ body {
   width: 600px;
 }
 
+form input {
+  padding: 5px;
+  /* font-size: 200%; */
+  outline-width: 0;
+  border: 1px solid #555;
+  border-radius: 5px;
+  margin-bottom: 3px;
+}
+
+
 .nav ul {
   list-style: none;
   padding-left: 0;
@@ -34,6 +44,8 @@ body {
 .nav ul li {
   display: inline;
   padding: 0.25em;
+  padding-left: 0;
+  padding-right: 0.5em;
 }
 
 .dict ul {

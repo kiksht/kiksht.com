@@ -111,9 +111,11 @@ class Login extends Component<{
                 {this.props.prevError === undefined ? "" : <p>Error: {this.props.prevError}</p>}
                 <form onSubmit={this.props.onLogin} method="post">
                     <div>
-                        <input type="text" name="email" id="email" required></input>
+                        Email:{" "}
+                        <input type="text" name="email" id="email" autoFocus required></input>
                     </div>
                     <div>
+                        Password:{" "}
                         <input type="password" name="password" id="password" required></input>
                     </div>
                     <div>
@@ -136,9 +138,11 @@ class Register extends Component<{
                 {this.props.prevError === undefined ? "" : <p>Error: {this.props.prevError}</p>}
                 <form onSubmit={this.props.onRegister} method="post">
                     <div>
-                        <input type="text" name="email" id="email" required></input>
+                        Email:{" "}
+                        <input type="text" name="email" id="email" autoFocus required></input>
                     </div>
                     <div>
+                        Password:{" "}
                         <input type="password" name="password" id="password" required></input>
                     </div>
                     <div>
