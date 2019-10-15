@@ -170,8 +170,7 @@ class Dictionary extends Component<
 
     debounceTimer: NodeJS.Timeout | undefined;
 
-    handleSearchBoxUpdate(e: React.ChangeEvent<HTMLInputElement>) {
-        const query = e.target.value;
+    updateMatches(query: string) {
         if (query === "") {
             this.setState({ query, matches: [] });
             return;
@@ -195,6 +194,11 @@ class Dictionary extends Component<
         } else {
             this.setState({ query, matches: [] });
         }
+    }
+
+    handleSearchBoxUpdate(e: React.ChangeEvent<HTMLInputElement>) {
+        const query = e.target.value;
+        this.updateMatches(query);
     }
 
     render() {
@@ -221,6 +225,7 @@ class Dictionary extends Component<
                             ],
                         }),
                     });
+                    this.updateMatches(this.state.query);
                 } else if (resp.status === 401) {
                     this.props.onUnauthorized();
                 }
