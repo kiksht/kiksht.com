@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { BrowserRouter as Router, Redirect, Switch, Route, Link } from "react-router-dom";
 import Fuse from "fuse.js";
 
-import "./App.css";
+import "./styles/main.css";
 import * as kiksht from "./kiksht";
 
 class Api {
@@ -60,6 +60,29 @@ class Api {
     }
 }
 
+const Input: React.FunctionComponent<React.InputHTMLAttributes<HTMLInputElement>> = (props) => {
+    return (
+        <input
+            className="w-64 border border-gray-400 rounded focus:outline-none focus:shadow-outline p-1 px-2"
+            {...props}
+        />
+    );
+};
+
+const Button: React.FunctionComponent<React.DetailedHTMLProps<
+    React.ButtonHTMLAttributes<HTMLButtonElement>,
+    HTMLButtonElement
+>> = (props) => {
+    return (
+        <button
+            className="p-3 px-4 ml-auto mr-auto block rounded bg-blue-600 text-white"
+            {...props}
+        >
+            {props.children}
+        </button>
+    );
+};
+
 class Home extends Component<{
     user: undefined | { email: string };
 }> {
@@ -80,7 +103,7 @@ class Home extends Component<{
                         <a href="https://warmsprings-nsn.gov/" target="_target">
                             Confederated Tribes of Warm Springs
                         </a>
-                        , you can <Link to="/login">create an account</Link> to access these
+                        , you can <Link to="/register">create an account</Link> to access these
                         materials.
                     </p>
                 </div>
@@ -106,20 +129,16 @@ class Login extends Component<{
 }> {
     render() {
         return (
-            <div>
+            <div className="ml-auto mr-auto w-auto w-fit-content">
                 <h2>Log in</h2>
                 {this.props.prevError === undefined ? "" : <p>Error: {this.props.prevError}</p>}
                 <form onSubmit={this.props.onLogin} method="post">
-                    <div>
-                        Email:{" "}
-                        <input type="text" name="email" id="email" autoFocus required></input>
-                    </div>
-                    <div>
-                        Password:{" "}
-                        <input type="password" name="password" id="password" required></input>
-                    </div>
-                    <div>
-                        <input type="submit" value="submit"></input>
+                    <div>Email</div>
+                    <Input type="text" name="email" id="email" autoFocus required />
+                    <div className="mt-2">Password</div>
+                    <Input type="password" name="password" id="password" required />
+                    <div className="mt-4">
+                        <Button type="submit">Submit</Button>
                     </div>
                 </form>
             </div>
@@ -133,20 +152,16 @@ class Register extends Component<{
 }> {
     render() {
         return (
-            <div>
+            <div className="ml-auto mr-auto w-auto w-fit-content">
                 <h2>Register</h2>
                 {this.props.prevError === undefined ? "" : <p>Error: {this.props.prevError}</p>}
                 <form onSubmit={this.props.onRegister} method="post">
-                    <div>
-                        Email:{" "}
-                        <input type="text" name="email" id="email" autoFocus required></input>
-                    </div>
-                    <div>
-                        Password:{" "}
-                        <input type="password" name="password" id="password" required></input>
-                    </div>
-                    <div>
-                        <input type="submit" value="submit"></input>
+                    <div>Email</div>
+                    <Input type="text" name="email" id="email" autoFocus required />
+                    <div className="mt-2">Password</div>
+                    <Input type="password" name="password" id="password" required />
+                    <div className="mt-4">
+                        <Button type="submit">Submit</Button>
                     </div>
                 </form>
             </div>
@@ -187,7 +202,7 @@ class Dictionary extends Component<
             this.debounceTimer = setTimeout(() => {
                 const matches = dict
                     .search(query)
-                    .map<[string, kiksht.Entry]>(entry => [entry.root, entry])
+                    .map<[string, kiksht.Entry]>((entry) => [entry.root, entry])
                     .slice(0, 100);
                 this.setState({ matches });
             }, 100);
@@ -203,13 +218,13 @@ class Dictionary extends Component<
 
     render() {
         if (this.state.dictionary === undefined) {
-            Api.dictionary().then(async resp => {
+            Api.dictionary().then(async (resp) => {
                 if (resp.status === 200) {
                     const dictData = Object.entries<kiksht.Entry>(await resp.json()).map(
                         ([word, entry]) => {
                             entry.root = word;
                             return entry;
-                        },
+                        }
                     );
                     this.setState({
                         dictionary: new Fuse(dictData, {
@@ -234,24 +249,25 @@ class Dictionary extends Component<
 
         return (
             <div className="dict">
-                <form onSubmit={e => e.preventDefault()}>
+                <form onSubmit={(e) => e.preventDefault()}>
                     <div>
-                        <input
+                        <Input
+                            className="border-2 border-gray-500 rounded w-full p-2 text-3xl outline-none mb-6"
                             type="text"
                             placeholder="Type word here"
                             value={this.state.query}
-                            onChange={e => this.handleSearchBoxUpdate(e)}
+                            onChange={(e) => this.handleSearchBoxUpdate(e)}
                             autoFocus
-                        ></input>
+                        />
                     </div>
                 </form>
-                <ul>
+                <div>
                     {this.state.matches.map(([word, entry]) => (
-                        <li>
+                        <div>
                             <DictionaryEntry word={word} entry={entry} />
-                        </li>
+                        </div>
                     ))}
-                </ul>
+                </div>
             </div>
         );
     }
@@ -267,7 +283,7 @@ class DictionaryEntry extends Component<{ word: string; entry: kiksht.Entry }> {
                 <div>
                     <i>Forms:</i>
                     <ul>
-                        {entry.forms.map(form => (
+                        {entry.forms.map((form) => (
                             <li>
                                 <i>{form.kiksht}</i>: {form.english}
                             </li>
@@ -284,7 +300,7 @@ class DictionaryEntry extends Component<{ word: string; entry: kiksht.Entry }> {
                 <div>
                     <i>Examples:</i>
                     <ul>
-                        {entry.examples.map(form => (
+                        {entry.examples.map((form) => (
                             <li>
                                 <i>{form.kiksht}</i>: {form.english}
                             </li>
@@ -318,7 +334,7 @@ class DictionaryEntry extends Component<{ word: string; entry: kiksht.Entry }> {
             );
 
         return (
-            <div className="dict-entry">
+            <div className="mb-3">
                 <b>{this.props.word}</b>: [<i>{entry.partOfSpeech}</i>] {entry.definition}
                 {forms}
                 {examples}
@@ -412,36 +428,38 @@ export default class App extends Component<
         }
 
         if (this.state.user === undefined) {
-            Api.currentUser().then(async resp => {
+            Api.currentUser().then(async (resp) => {
                 if (resp.status === 200) {
                     this.setState({ user: await resp.json() });
                 }
             });
         }
 
+        const ulClasses = "flex list-none ml-0";
+        const liClasses = "mr-6 my-4";
         const navUl =
             this.state.user === undefined ? (
-                <ul>
-                    <li>
+                <ul className={ulClasses}>
+                    <li className={liClasses}>
                         <Link to="/">Home</Link>
                     </li>
-                    <li>
+                    <li className={`${liClasses} ml-auto`}>
                         <Link to="/login">Log in</Link>
                     </li>
-                    <li>
+                    <li className={liClasses}>
                         <Link to="/register">Register</Link>
                     </li>
                 </ul>
             ) : (
-                <ul>
-                    <li>
+                <ul className={ulClasses}>
+                    <li className={liClasses}>
                         <Link to="/">Home</Link>
                     </li>
-                    <li>
+                    <li className={liClasses}>
                         <Link to="/dictionary">Dictionary</Link>
                     </li>
-                    <li>
-                        <Link to="" onClick={e => this.handleLogout(e)}>
+                    <li className={`${liClasses} ml-auto`}>
+                        <Link to="" onClick={(e) => this.handleLogout(e)}>
                             Sign out
                         </Link>
                     </li>
@@ -459,13 +477,13 @@ export default class App extends Component<
                         <Route path="/login">
                             <Login
                                 prevError={this.state.login.prevError}
-                                onLogin={e => this.handleLogin(e)}
+                                onLogin={(e) => this.handleLogin(e)}
                             />
                         </Route>
                         <Route path="/register">
                             <Register
                                 prevError={this.state.registration.prevError}
-                                onRegister={e => this.handleRegister(e)}
+                                onRegister={(e) => this.handleRegister(e)}
                             />
                         </Route>
                         <Route path="/dictionary">

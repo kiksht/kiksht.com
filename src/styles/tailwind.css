@@ -3,3 +3,37 @@
 @tailwind components;
 
 @tailwind utilities;
+
+body {
+    width: 700px;
+    font-family: Inter var,system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;
+    @apply ml-auto mr-auto text-gray-800 font-light;
+}
+
+p {
+    @apply mb-3;
+}
+
+a {
+    @apply text-indigo-700;
+}
+
+a:hover {
+    @apply underline;
+}
+
+b {
+    @apply font-bold;
+}
+
+h2 {
+    @apply text-4xl font-medium mb-5;
+}
+
+ul {
+    @apply list-disc ml-8 my-2;
+}
+
+.w-fit-content {
+    width: fit-content;
+}

@@ -19,10 +19,11 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "PUBLIC_URL=DARK_STATIC_ASSETS_BASE_URL react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "watch:css": "postcss src/styles/tailwind.css -w -o src/styles/main.css"
+    "watch:css": "postcss src/styles/tailwind.css -w -o src/styles/main.css",
+    "dark": "dark --canvas alex build/"
   },
   "eslintConfig": {
     "extends": "react-app"
