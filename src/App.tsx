@@ -320,6 +320,9 @@ class Dictionary extends Component<
                     </div>
                 </form>
                 <div>
+                    <div className="text-gray-600 text-lg text-center">
+                        {this.state.dictionary === undefined ? "Fetching dictionary data..." : ""}
+                    </div>
                     {this.state.matches.map(([word, entry]) => (
                         <div>
                             <DictionaryEntry word={word} entry={entry} />
