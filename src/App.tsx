@@ -6,8 +6,10 @@ import "./styles/main.css";
 import * as kiksht from "./kiksht";
 
 class Api {
+    static rootDomain = "https://alex.builtwithdark.com";
+
     public static login(email: string, password: string): Promise<Response> {
-        return fetch("/api/v1/login", {
+        return fetch(`${this.rootDomain}/api/v1/login`, {
             method: "POST",
             credentials: "include",
             headers: {
@@ -19,7 +21,7 @@ class Api {
     }
 
     public static logout(): Promise<Response> {
-        return fetch("/api/v1/logout", {
+        return fetch(`${this.rootDomain}/api/v1/logout`, {
             method: "POST",
             credentials: "include",
             headers: {
@@ -30,7 +32,7 @@ class Api {
     }
 
     public static register(email: string, password: string): Promise<Response> {
-        return fetch("/api/v1/register", {
+        return fetch(`${this.rootDomain}/api/v1/register`, {
             method: "POST",
             credentials: "include",
             headers: {
@@ -42,14 +44,14 @@ class Api {
     }
 
     public static dictionary(): Promise<Response> {
-        return fetch("/api/v1/dictionary", {
+        return fetch(`${this.rootDomain}/api/v1/dictionary`, {
             method: "GET",
             credentials: "include",
         });
     }
 
     public static currentUser(): Promise<Response> {
-        return fetch("/api/v1/current-user", {
+        return fetch(`${this.rootDomain}/api/v1/current-user`, {
             method: "GET",
             credentials: "include",
             headers: {
