@@ -62,11 +62,24 @@ class Api {
     }
 }
 
+const ErrorAlert: React.FunctionComponent<{ className?: string }> = (props) => {
+    const className = `${
+        props.className || ""
+    } bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative`;
+    return (
+        <div className={className} role="alert">
+            <strong className="font-bold">Error:</strong> {props.children}
+        </div>
+    );
+};
+
 const Input: React.FunctionComponent<React.InputHTMLAttributes<HTMLInputElement>> = (props) => {
     return (
         <input
-            className="w-64 border border-gray-400 rounded focus:outline-none focus:shadow-outline p-1 px-2"
             {...props}
+            className={`${
+                props.className || ""
+            } border border-gray-400 rounded focus:outline-none focus:shadow-outline p-1 px-2`}
         />
     );
 };
@@ -77,7 +90,8 @@ const Button: React.FunctionComponent<React.DetailedHTMLProps<
 >> = (props) => {
     return (
         <button
-            className="p-3 px-4 ml-auto mr-auto block rounded bg-blue-600 text-white"
+            // className="p-3 px-4 ml-auto mr-auto block rounded bg-blue-600 text-white"
+            className="ml-auto mr-auto block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
             {...props}
         >
             {props.children}
@@ -92,22 +106,26 @@ class Home extends Component<{
         if (this.props.user === undefined) {
             return (
                 <div>
-                    <p>
-                        <a href="https://en.wikipedia.org/wiki/Kiksht" target="_target">
-                            Kiksht
-                        </a>{" "}
-                        is a dialect of Upper Chinook that was spoken along the Columbia River in
-                        present day Washington and Oregon.
-                    </p>
-                    <p>
-                        This site contains resources for learning, reading, writing, and speaking
-                        the language. If you are an enrolled member of the{" "}
-                        <a href="https://warmsprings-nsn.gov/" target="_target">
-                            Confederated Tribes of Warm Springs
-                        </a>
-                        , you can <Link to="/register">create an account</Link> to access these
-                        materials.
-                    </p>
+                    <h1 className="text-center">Resources for Preserving the Kiksht Language</h1>
+                    {/* <div className="ml-auto mr-auto bg-white shadow-md rounded px-12 pt-8 pb-10 mb-4"> */}
+                    <div>
+                        <p>
+                            <a href="https://en.wikipedia.org/wiki/Kiksht" target="_target">
+                                Kiksht
+                            </a>{" "}
+                            is a dialect of Upper Chinook that was spoken along the Columbia River
+                            in present day Washington and Oregon.
+                        </p>
+                        <p>
+                            This site contains resources for learning, reading, writing, and
+                            speaking the language. If you are an enrolled member of the{" "}
+                            <a href="https://warmsprings-nsn.gov/" target="_target">
+                                Confederated Tribes of Warm Springs
+                            </a>
+                            , you can <Link to="/register">create an account</Link> to access these
+                            materials.
+                        </p>
+                    </div>
                 </div>
             );
         } else {
@@ -131,16 +149,35 @@ class Login extends Component<{
 }> {
     render() {
         return (
-            <div className="ml-auto mr-auto w-auto w-fit-content">
-                <h2>Log in</h2>
-                {this.props.prevError === undefined ? "" : <p>Error: {this.props.prevError}</p>}
+            <div className="ml-auto mr-auto w-96 bg-white shadow-md rounded px-12 pt-8 pb-10 mb-4">
+                <h2 className="text-gray-700">Log In</h2>
+                {this.props.prevError === undefined ? (
+                    ""
+                ) : (
+                    <ErrorAlert className="mb-4">{this.props.prevError}</ErrorAlert>
+                )}
                 <form onSubmit={this.props.onLogin} method="post">
-                    <div>Email</div>
-                    <Input type="text" name="email" id="email" autoFocus required />
-                    <div className="mt-2">Password</div>
-                    <Input type="password" name="password" id="password" required />
+                    <label className="block mb-2 text-sm text-gray-700 font-bold">Email</label>
+                    <Input
+                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        type="text"
+                        name="email"
+                        id="email"
+                        autoFocus
+                        required
+                    />
+                    <label className="block mt-5 mb-2 text-sm text-gray-700 font-bold">
+                        Password
+                    </label>
+                    <Input
+                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        type="password"
+                        name="password"
+                        id="password"
+                        required
+                    />
                     <div className="mt-4">
-                        <Button type="submit">Submit</Button>
+                        <Button type="submit">Log In</Button>
                     </div>
                 </form>
             </div>
@@ -154,16 +191,35 @@ class Register extends Component<{
 }> {
     render() {
         return (
-            <div className="ml-auto mr-auto w-auto w-fit-content">
-                <h2>Register</h2>
-                {this.props.prevError === undefined ? "" : <p>Error: {this.props.prevError}</p>}
+            <div className="ml-auto mr-auto w-96 bg-white shadow-md rounded px-12 pt-8 pb-10 mb-4">
+                <h2 className="text-gray-700">Register</h2>
+                {this.props.prevError === undefined ? (
+                    ""
+                ) : (
+                    <ErrorAlert className="mb-4">{this.props.prevError}</ErrorAlert>
+                )}
                 <form onSubmit={this.props.onRegister} method="post">
-                    <div>Email</div>
-                    <Input type="text" name="email" id="email" autoFocus required />
-                    <div className="mt-2">Password</div>
-                    <Input type="password" name="password" id="password" required />
+                    <label className="block mb-2 text-sm text-gray-700 font-bold">Email</label>
+                    <Input
+                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        type="text"
+                        name="email"
+                        id="email"
+                        autoFocus
+                        required
+                    />
+                    <label className="block mt-5 mb-2 text-sm text-gray-700 font-bold">
+                        Password
+                    </label>
+                    <Input
+                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        type="password"
+                        name="password"
+                        id="password"
+                        required
+                    />
                     <div className="mt-4">
-                        <Button type="submit">Submit</Button>
+                        <Button type="submit">Register</Button>
                     </div>
                 </form>
             </div>
@@ -386,10 +442,9 @@ export default class App extends Component<
         }
     }
 
-    async handleLogout(e: React.FormEvent<HTMLAnchorElement>) {
+    async handleLogout(e: React.FormEvent<HTMLButtonElement>) {
         e.preventDefault();
         const resp = await Api.logout();
-        console.log(`logout ${resp.status}`);
         this.setState({ redirectTo: resp.status === 200 ? "/" : undefined, user: undefined });
     }
 
@@ -437,33 +492,83 @@ export default class App extends Component<
             });
         }
 
-        const ulClasses = "flex list-none ml-0";
-        const liClasses = "mr-6 my-4";
+        const ulClasses = "contents align-middle flex list-none ml-0 mt-0 mb-8";
+        const buttonClasses = (key?: string) =>
+            `${
+                window.location.pathname === key
+                    ? "bg-gray-900 text-white"
+                    : "text-gray-500 hover:bg-gray-700"
+            } my-4 mr-2 px-4 py-2 hover:no-underline hover:text-white focus:outline-none rounded`;
         const navUl =
             this.state.user === undefined ? (
                 <ul className={ulClasses}>
-                    <li className={liClasses}>
-                        <Link to="/">Home</Link>
+                    <li>
+                        <button
+                            className="my-4 pr-4 py-2 font-bold text-white hover:no-underline focus:outline-none rounded"
+                            onClick={() =>
+                                this.setState((s) => {
+                                    return { ...s, redirectTo: "/" };
+                                })
+                            }
+                        >
+                            Kiksht
+                        </button>
                     </li>
-                    <li className={`${liClasses} ml-auto`}>
-                        <Link to="/login">Log in</Link>
+                    <li className={`ml-auto`}>
+                        <button
+                            className={buttonClasses("/login")}
+                            onClick={() =>
+                                this.setState((s) => {
+                                    return { ...s, redirectTo: "/login" };
+                                })
+                            }
+                        >
+                            Log In
+                        </button>
                     </li>
-                    <li className={liClasses}>
-                        <Link to="/register">Register</Link>
+                    <li>
+                        <button
+                            className={buttonClasses("/register")}
+                            onClick={() =>
+                                this.setState((s) => {
+                                    return { ...s, redirectTo: "/register" };
+                                })
+                            }
+                        >
+                            Register
+                        </button>
                     </li>
                 </ul>
             ) : (
                 <ul className={ulClasses}>
-                    <li className={liClasses}>
-                        <Link to="/">Home</Link>
+                    <li>
+                        <button
+                            className="my-4 pr-4 py-2 font-bold text-white hover:no-underline focus:outline-none rounded"
+                            onClick={() =>
+                                this.setState((s) => {
+                                    return { ...s, redirectTo: "/" };
+                                })
+                            }
+                        >
+                            Kiksht
+                        </button>
                     </li>
-                    <li className={liClasses}>
-                        <Link to="/dictionary">Dictionary</Link>
+                    <li>
+                        <button
+                            className={buttonClasses("/dictionary")}
+                            onClick={() =>
+                                this.setState((s) => {
+                                    return { ...s, redirectTo: "/dictionary" };
+                                })
+                            }
+                        >
+                            Dictionary
+                        </button>
                     </li>
-                    <li className={`${liClasses} ml-auto`}>
-                        <Link to="" onClick={(e) => this.handleLogout(e)}>
+                    <li className={`ml-auto`}>
+                        <button className={buttonClasses()} onClick={(e) => this.handleLogout(e)}>
                             Sign out
-                        </Link>
+                        </button>
                     </li>
                 </ul>
             );
@@ -471,30 +576,30 @@ export default class App extends Component<
         return (
             <Router>
                 <div>
-                    <nav className="nav">{navUl}</nav>
+                    <nav className="bg-gray-800 shadow-lg">{navUl}</nav>
 
-                    {/* A <Switch> looks through its children <Route>s and
-            renders the first one that matches the current URL. */}
-                    <Switch>
-                        <Route path="/login">
-                            <Login
-                                prevError={this.state.login.prevError}
-                                onLogin={(e) => this.handleLogin(e)}
-                            />
-                        </Route>
-                        <Route path="/register">
-                            <Register
-                                prevError={this.state.registration.prevError}
-                                onRegister={(e) => this.handleRegister(e)}
-                            />
-                        </Route>
-                        <Route path="/dictionary">
-                            <Dictionary onUnauthorized={() => this.handleUnauthorized()} />
-                        </Route>
-                        <Route path="/">
-                            <Home user={this.state.user} />
-                        </Route>
-                    </Switch>
+                    <div className="contents">
+                        <Switch>
+                            <Route path="/login">
+                                <Login
+                                    prevError={this.state.login.prevError}
+                                    onLogin={(e) => this.handleLogin(e)}
+                                />
+                            </Route>
+                            <Route path="/register">
+                                <Register
+                                    prevError={this.state.registration.prevError}
+                                    onRegister={(e) => this.handleRegister(e)}
+                                />
+                            </Route>
+                            <Route path="/dictionary">
+                                <Dictionary onUnauthorized={() => this.handleUnauthorized()} />
+                            </Route>
+                            <Route path="/">
+                                <Home user={this.state.user} />
+                            </Route>
+                        </Switch>
+                    </div>
                 </div>
             </Router>
         );
